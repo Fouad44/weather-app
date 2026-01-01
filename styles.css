@@ -489,6 +489,9 @@ main {
 }
 
 @media screen and (max-width: 608px) {
+  body {
+    padding-bottom: 2rem;
+  }
   .logo {
     width: 35%;
   }
@@ -524,11 +527,11 @@ main {
   }
 
   .city {
-    font-size: 2rem;
+    font-size: 1.6rem;
   }
 
   .current-date {
-    font-size: 1.2rem;
+    font-size: 0.8rem;
   }
 
   .large-img {
@@ -542,5 +545,13 @@ main {
 
   .info-temp {
     font-size: 5rem;
+  }
+
+  .temp-card-forecast {
+    min-width: 30%;
+  }
+
+  .hourly-forecast-title {
+    font-size: 1rem;
   }
 }
