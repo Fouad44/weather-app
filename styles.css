@@ -1,0 +1,546 @@
+:root {
+  --main-color: #000e2b;
+  --text-color: white;
+  --card: #1a2835;
+  --card-hourly-color: #3b4753;
+  --border-color: #8ba4bb;
+  --btn-bg: rgb(50, 109, 197);
+  --btn-hover-bg: rgb(68, 118, 194);
+  --menu-bg: #111a2e;
+  --toggle-hover: #2b343d;
+  --card-border: rgb(0, 49, 141);
+  --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4), 0 10px 20px rgba(0, 0, 0, 0.2),
+    0 15px 25px rgba(0, 0, 0, 0.1);
+  --secondary-text: #9aa4bf;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Montserrat";
+  font-weight: 700;
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body {
+  background-color: var(--main-color);
+  color: var(--text-color);
+  padding-bottom: 6rem;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  /* background-image: url(images/cloud-animation.png);
+  background-repeat: repeat-x;
+  background-position: 100% 0%;
+  animation: bgMove 40s linear infinite; */
+}
+/* 
+@keyframes bgMove {
+  0% {
+    background-position: 100% 0%;
+  }
+  25% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 0% 0%;
+  }
+  75% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
+} */
+
+/* Header Styling Section */
+header {
+  flex-direction: column;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+}
+
+.dropdown {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdown-toggle {
+  width: 9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--card-hourly-color);
+  padding: 1rem;
+  border-radius: 12px;
+  gap: 10px;
+  cursor: pointer;
+  transition: all ease-in-out 0.2s;
+}
+
+.dropdown-toggle:hover {
+  background-color: var(--card-hourly-color);
+}
+
+.dropdown-menu {
+  list-style-type: none;
+  position: absolute;
+  top: 110%;
+  right: 0;
+  padding-left: 0;
+  z-index: 100;
+  width: 200%;
+  background-color: var(--menu-bg);
+
+  margin: 0;
+  border-radius: 8px;
+}
+
+.option {
+  position: relative;
+  padding: 10px 10px 10px 16px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.option:hover {
+  background-color: var(--btn-hover-bg);
+}
+
+.group-label {
+  color: var(--secondary-text);
+  /* color: var(--main-color); */
+  border-top: 1px solid var(--main-color);
+  font-weight: bold;
+  cursor: default;
+  padding: 5px 0 0 5px;
+  font-size: 1.1rem;
+}
+
+.selected::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-image: url(images/icon-checkmark.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  left: 80%;
+}
+
+/* Drop-down Menus Visibilites */
+
+.hidden {
+  visibility: hidden;
+}
+/* Search Bar Styling Section */
+
+h1 {
+  font-size: 4rem;
+  font-family: "Cherry Swash";
+}
+
+.searchbar {
+  width: 80%;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.searchbar-input-result {
+  width: 40%;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  background-color: var(--card);
+  outline: none;
+  font-size: 1.3rem;
+  padding: 0.8rem;
+  border: 0px solid;
+  border-radius: 8px;
+  background-image: url(images/icon-search.svg);
+  background-repeat: no-repeat;
+  background-position: 20px center;
+  padding-left: 60px;
+  color: var(--text-color);
+}
+
+.search-btn {
+  background-color: var(--btn-bg);
+  color: var(--text-color);
+  font-size: 1.3rem;
+  padding: 0.8rem;
+  border: 0px solid;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all ease-in-out 0.2s;
+}
+
+.search-btn:hover {
+  background-color: var(--btn-hover-bg);
+}
+
+#search-result-menu {
+  list-style: none;
+  background-color: var(--card);
+  width: 100%;
+  position: absolute;
+  top: 110%;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  padding-left: 0;
+  margin: 0;
+}
+
+#search-result-menu li {
+  padding: 1rem;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+}
+
+#search-result-menu li:hover {
+  background-color: var(--btn-hover-bg);
+}
+/* Main Styling Section */
+
+main {
+  margin-top: 6rem;
+}
+
+.main-wrapper {
+  display: flex;
+  justify-content: space-between;
+
+  width: 80%;
+}
+
+.leftside-container {
+  width: 65%;
+}
+
+.rightside-container {
+  width: 30%;
+}
+
+.main-temp {
+  background-image: url(images/bg-today-large.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 32px;
+  padding: 5rem 2rem;
+  justify-content: space-between;
+}
+
+.city {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.current-date {
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: rgb(202, 201, 201);
+  line-height: 0.5rem;
+}
+
+.todays-temp {
+  gap: 36px;
+}
+
+.info-temp {
+  font-size: 6rem;
+}
+
+/* Images Styling Section */
+
+.large-img {
+  width: 120px;
+  height: 120px;
+}
+
+.mid-img {
+  width: 60px;
+  height: 60px;
+}
+
+.small-img {
+  width: 40px;
+  height: 40px;
+}
+
+/* Second Section => Weather Details Cards For Today (Feels Like, Humidity, Wind, Precipitation)  */
+
+.weather-details {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 2rem;
+}
+
+.temp-card {
+  background-color: var(--card);
+  border-radius: 16px;
+  padding-left: 1rem;
+  width: 23%;
+  min-width: 150px;
+
+  box-shadow: var(--box-shadow);
+  border: 1px solid var(--card-border);
+}
+
+/* Daily Forecast Styling Section */
+.daily-forecast {
+  flex-direction: column;
+  align-items: flex-start;
+
+  margin-top: 3rem;
+}
+
+.forecast-details {
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  width: 100%;
+}
+
+.temp-card-forecast {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  max-width: 120px;
+  min-width: 120px;
+  padding: 0;
+}
+
+.temp-card-max-min {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.h4-day {
+  margin-bottom: 0;
+}
+
+/* Fourth Section => Showing The Next 8 Hours of Weather Change Information  */
+
+.hourly-forecast {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--card);
+  border-radius: 32px;
+  height: 100%;
+  padding: 1rem 0 2rem 0;
+  box-shadow: var(--box-shadow);
+  border: 1px solid var(--card-border);
+}
+
+.hourly-forecast-header {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+
+.hour-info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  height: 100%;
+  padding-top: 1rem;
+}
+
+.hour-info-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background-color: var(--card-hourly-color);
+  padding: 0.3rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.hour {
+  gap: 10px;
+}
+
+/* Media Query */
+
+@media screen and (max-width: 1650px) {
+  nav {
+    width: 90%;
+  }
+
+  .main-wrapper {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  html {
+    font-size: 14px;
+  }
+  .forecast-details {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+  }
+  .temp-card {
+    width: 45%;
+  }
+}
+
+@media screen and (max-width: 1068px) {
+  .main-wrapper {
+    flex-direction: column;
+    gap: 50px;
+  }
+
+  .leftside-container {
+    width: 100%;
+  }
+
+  .rightside-container {
+    width: 100%;
+  }
+
+  .weather-details {
+    justify-content: flex-start;
+  }
+
+  .temp-card {
+    flex-grow: 1;
+  }
+
+  .temp-card-forecast {
+    flex-grow: 2;
+  }
+
+  .hour-info-container {
+    gap: 30px;
+  }
+}
+
+@media screen and (max-width: 875px) {
+  h1 {
+    width: 50%;
+    font-size: 3rem;
+    text-align: center;
+  }
+
+  .searchbar {
+    width: 90%;
+  }
+
+  .searchbar-input-result {
+    width: 70%;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .city {
+    font-size: 1.5rem;
+  }
+
+  .current-date {
+    font-size: 1rem;
+  }
+
+  .large-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .todays-temp {
+    gap: 20px;
+  }
+
+  .info-temp {
+    font-size: 5rem;
+  }
+}
+
+@media screen and (max-width: 608px) {
+  .logo {
+    width: 35%;
+  }
+
+  .dropdown-toggle {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    width: 80%;
+    font-size: 2rem;
+  }
+
+  .searchbar {
+    flex-direction: column;
+    margin-top: 1rem;
+  }
+  .searchbar-input-result {
+    width: 100%;
+  }
+  .search-input {
+    width: 100%;
+  }
+  .search-btn {
+    width: 100%;
+  }
+
+  .main-temp {
+    flex-direction: column;
+    padding: 2rem;
+    gap: 24px;
+  }
+
+  .city {
+    font-size: 2rem;
+  }
+
+  .current-date {
+    font-size: 1.2rem;
+  }
+
+  .large-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .todays-temp {
+    gap: 20px;
+  }
+
+  .info-temp {
+    font-size: 5rem;
+  }
+}
