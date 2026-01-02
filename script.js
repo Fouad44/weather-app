@@ -11,6 +11,7 @@ const searchBtn = document.getElementById("search-btn");
 const searchResultMenu = document.getElementById("search-result-menu");
 const cityText = document.getElementById("city-text");
 const currentTempText = document.getElementById("current-temp");
+const currentTempImg = document.getElementById("cur-temp-img");
 const currentDateText = document.getElementById("current-date");
 const currentFeelsLike = document.getElementById("feels-like");
 const currentHumidity = document.getElementById("humidity");
@@ -20,7 +21,7 @@ const dailyForecastCardsWrapper = document.getElementById(
   "daily-forecast-cards-container"
 );
 const hourlyCardsContainer = document.getElementById("hourly-cards-wrapper");
-const currentTempImg = document.getElementById("cur-temp-img");
+
 const loader = document.getElementById("load");
 const hidingContent = document.getElementById("hiding-content");
 
@@ -93,14 +94,16 @@ const toggleMenu = (menu, visibilityClass) => {
   menu.classList.toggle(visibilityClass);
 };
 
+// Shows Loader Before Getting Data
 function showLoader() {
-  loader.classList.remove("hide");
   hidingContent.classList.remove("hide");
+  currentTempImg.classList.add("hidden");
 }
 
+// Hides Loader After Getting Data
 function hideLoader() {
-  loader.classList.add("hide");
   hidingContent.classList.add("hide");
+  currentTempImg.classList.remove("hidden");
 }
 
 // Getting Weather Data From API
@@ -272,9 +275,11 @@ function updateUI(cityData, weatherData) {
   // Current Temperature
   const currentTemp = `${Math.round(weatherData.current.temperature_2m)}°`;
   currentTempText.textContent = currentTemp;
+
   currentTempImg.src = `images/icon-${
     weatherCode[weatherData.current.weather_code]
   }`;
+  currentTempText.before(currentTempImg);
   // Weather Data Cards (Feels Like, Humidity %, Wind Speed km/h, Precipitation mm)
   const currentApparentTemp = Math.round(
     weatherData.current.apparent_temperature

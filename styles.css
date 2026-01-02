@@ -250,10 +250,21 @@ main {
   font-size: 6rem;
 }
 
-.load {
+.hiding-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--card);
   position: absolute;
-  top: 40%;
-  left: 48%;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  border-radius: 24px;
+  box-shadow: var(--box-shadow);
+}
+
+.load {
   width: 50px;
   height: 50px;
   border: 6px solid var(--main-color);
@@ -270,17 +281,6 @@ main {
   to {
     transform: rotate(360deg);
   }
-}
-
-.hiding-content {
-  background-color: var(--card);
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  border-radius: 24px;
-  box-shadow: var(--box-shadow);
 }
 
 .hide {
@@ -571,12 +571,6 @@ main {
 
   .info-temp {
     font-size: 5rem;
-  }
-
-  .load {
-    top: 40%;
-
-    left: 40%;
   }
 
   .temp-card-forecast {
