@@ -41,20 +41,18 @@
             <!-- Temperature -->
             <div class="group-label">Temperature</div>
 
-            <li class="option selected" data-group="temp">Celsius (°C)</li>
-            <li class="option" data-group="temp">Fahrenheit (°F)</li>
+            <li class="option selected" data-group="temp">Celsius</li>
+            <li class="option" data-group="temp">Fahrenheit</li>
 
             <!-- Wind -->
             <div class="group-label">Wind</div>
-            <li class="option selected" data-group="wind">
-              Meters / second (m/s)
-            </li>
-            <li class="option" data-group="wind">Kilometers / Hour (km/h)</li>
+            <li class="option selected" data-group="wind">km/h</li>
+            <li class="option" data-group="wind">mph</li>
 
             <!-- Precipitation -->
             <div class="group-label">Precipitation</div>
-            <li class="option selected" data-group="rain">Millimeters (mm)</li>
-            <li class="option" data-group="rain">Inches (in)</li>
+            <li class="option selected" data-group="rain">Millimeters</li>
+            <li class="option" data-group="rain">Inches</li>
           </ul>
         </div>
       </nav>
@@ -83,37 +81,34 @@
           <!-- First Section => (Today's Temperature UI) -->
           <section class="main-temp flex">
             <div class="main-temp-city">
-              <h3 class="city" id="city-text">City, Country</h3>
-              <p class="current-date" id="current-date">Day, Aug 5, 2025</p>
+              <h3 class="city" id="city-text"></h3>
+              <p class="current-date" id="current-date"></p>
             </div>
             <div class="todays-temp flex">
-              <img
-                src="images/icon-sunny.webp"
-                alt="sunny"
-                class="large-img"
-                id="cur-temp-img"
-              />
-              <div class="info-temp" id="current-temp">20°</div>
+              <img class="large-img hidden" id="cur-temp-img" />
+              <div class="info-temp temperature_unit" id="current-temp"></div>
             </div>
+            <div class="load hide" id="load"></div>
+            <div class="hiding-content hide" id="hiding-content"></div>
           </section>
 
           <!-- Second Section => Weather Details Cards For Today (Feels Like, Humidity, Wind, Precipitation) -->
           <section class="weather-details flex">
             <div class="temp-card feels-like">
               <h3 class="temp-card-title">Feels like</h3>
-              <p class="temp-card-value" id="feels-like">18°</p>
+              <p class="temp-card-value temperature_unit" id="feels-like">_</p>
             </div>
             <div class="temp-card humidity">
               <h3 class="temp-card-title">Humidity</h3>
-              <p class="temp-card-value" id="humidity">46%</p>
+              <p class="temp-card-value" id="humidity">_</p>
             </div>
             <div class="temp-card wind">
               <h3 class="temp-card-title">Wind</h3>
-              <p class="temp-card-value" id="wind">14 km/h</p>
+              <p class="temp-card-value" id="wind">_</p>
             </div>
             <div class="temp-card precipitation">
               <h3 class="temp-card-title">Precipitation</h3>
-              <p class="temp-card-value" id="precipitation">0 mm</p>
+              <p class="temp-card-value" id="precipitation">_</p>
             </div>
           </section>
 
@@ -123,72 +118,7 @@
             <div
               class="flex forecast-details"
               id="daily-forecast-cards-container"
-            >
-              <div class="temp-card temp-card-forecast">
-                <h4 class="h4-day">Tue</h4>
-                <img src="images/icon-rain.webp" alt="rainy" class="mid-img" />
-                <div class="temp-card-max-min">
-                  <p class="max-temp">20°</p>
-                  <p class="min-temp">14°</p>
-                </div>
-              </div>
-              <div class="temp-card temp-card-forecast">
-                <h4 class="h4-day">Wed</h4>
-                <img
-                  src="images/icon-drizzle.webp"
-                  alt="drizzle"
-                  class="mid-img"
-                />
-                <div class="temp-card-max-min">
-                  <p class="max-temp">21°</p>
-                  <p class="min-temp">15°</p>
-                </div>
-              </div>
-              <div class="temp-card temp-card-forecast">
-                <h4 class="h4-day">Thu</h4>
-                <img src="images/icon-sunny.webp" alt="sunny" class="mid-img" />
-                <div class="temp-card-max-min">
-                  <p class="max-temp">24°</p>
-                  <p class="min-temp">14°</p>
-                </div>
-              </div>
-              <div class="temp-card temp-card-forecast">
-                <h4 class="h4-day">Fri</h4>
-                <img
-                  src="images/icon-partly-cloudy.webp"
-                  alt="partly-cloudy"
-                  class="mid-img"
-                />
-                <div class="temp-card-max-min">
-                  <p class="max-temp">25°</p>
-                  <p class="min-temp">13°</p>
-                </div>
-              </div>
-              <div class="temp-card temp-card-forecast">
-                <h4 class="h4-day">Sat</h4>
-                <img src="images/icon-storm.webp" alt="storm" class="mid-img" />
-                <div class="temp-card-max-min">
-                  <p class="max-temp">21°</p>
-                  <p class="min-temp">15°</p>
-                </div>
-              </div>
-              <div class="temp-card temp-card-forecast">
-                <h4 class="h4-day">Sun</h4>
-                <img src="images/icon-snow.webp" alt="snowy" class="mid-img" />
-                <div class="temp-card-max-min">
-                  <p class="max-temp">25°</p>
-                  <p class="min-temp">16°</p>
-                </div>
-              </div>
-              <div class="temp-card temp-card-forecast">
-                <h4 class="h4-day">Mon</h4>
-                <img src="images/icon-fog.webp" alt="fog" class="mid-img" />
-                <div class="temp-card-max-min">
-                  <p class="max-temp">24°</p>
-                  <p class="min-temp">15°</p>
-                </div>
-              </div>
-            </div>
+            ></div>
           </section>
         </div>
 

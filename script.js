@@ -21,11 +21,13 @@ const dailyForecastCardsWrapper = document.getElementById(
 );
 const hourlyCardsContainer = document.getElementById("hourly-cards-wrapper");
 const currentTempImg = document.getElementById("cur-temp-img");
+const loader = document.getElementById("load");
+const hidingContent = document.getElementById("hiding-content");
 
 let currentWeatherData = null;
-
 let cityName = "";
 let timeZoneState = "";
+let mph = 0;
 const date = new Date();
 const days = {
   0: "Sunday",
@@ -72,6 +74,15 @@ const weatherCode = {
   99: "storm.webp",
 };
 
+const unitsActions = {
+  Celsius: () => updateTempUnit("c"),
+  Fahrenheit: () => updateTempUnit("f"),
+  "km/h": () => updateWindSpeedUnit("km/h"),
+  mph: () => updateWindSpeedUnit("mph"),
+  Millimeters: () => updatePrecipitationUnit("mm"),
+  Inches: () => updatePrecipitationUnit("in"),
+};
+
 // Toggle Dropdown Lists Function
 const toggleMenu = (menu, visibilityClass) => {
   allMenus.forEach((m) => {
@@ -82,9 +93,20 @@ const toggleMenu = (menu, visibilityClass) => {
   menu.classList.toggle(visibilityClass);
 };
 
+function showLoader() {
+  loader.classList.remove("hide");
+  hidingContent.classList.remove("hide");
+}
+
+function hideLoader() {
+  loader.classList.add("hide");
+  hidingContent.classList.add("hide");
+}
+
 // Getting Weather Data From API
 
 async function getWeather(lat, lon) {
+  showLoader();
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weather_code&hourly=temperature_2m,weather_code&current=apparent_temperature,temperature_2m,relative_humidity_2m,rain,precipitation,wind_speed_10m,weather_code&timezone=auto`;
     const response = await fetch(url);
@@ -92,10 +114,10 @@ async function getWeather(lat, lon) {
     return data;
   } catch (err) {
     console.log(Error("Couldn't get data"), err);
+  } finally {
+    hideLoader();
   }
 }
-
-////////////////////////////////////////////////
 
 // Getting City Coordinates From API
 
@@ -182,11 +204,13 @@ function updateHourlyForecast(currentWeatherData, timezone, selectedDayIndex) {
   const totalDays = 7;
   todayIndex = new Date().getDay();
 
+  // Counts The Steps Between Chosen Day And Today
   const steps =
     selectedDayIndex >= todayIndex
       ? selectedDayIndex - todayIndex
       : totalDays - todayIndex + selectedDayIndex;
 
+  // Gets The Target Day Name
   const targetDayName = days[(todayIndex + steps) % 7];
 
   for (let i = 0; i < currentWeatherData.hourly.time.length; i++) {
@@ -222,7 +246,7 @@ function updateHourlyForecast(currentWeatherData, timezone, selectedDayIndex) {
         weatherCode[currentWeatherData.hourly.weather_code[i]]
       }`;
       image.alt = "Weather Condition";
-      divTemp.classList.add("hourly-temp");
+      divTemp.classList.add("hourly-temp", "temperature_unit");
 
       spanHour.textContent = hourText;
       divTemp.textContent = `${Math.round(
@@ -236,9 +260,8 @@ function updateHourlyForecast(currentWeatherData, timezone, selectedDayIndex) {
       hourlyCardsContainer.appendChild(divCard);
     }
   }
+  casheBaseTemps();
 }
-
-////////////////////////////////////////////////
 
 // Render Fetched Data
 
@@ -278,8 +301,8 @@ function updateUI(cityData, weatherData) {
     h4DayName.classList.add("h4-day");
     imgWeather.classList.add("mid-img");
     divMaxMin.classList.add("temp-card-max-min");
-    pMax.classList.add("max-temp");
-    pMin.classList.add("min-temp");
+    pMax.classList.add("max-temp", "temperature_unit");
+    pMin.classList.add("min-temp", "temperature_unit");
 
     // Adding Text Content To Daily Forecast (Max, Min) Cards
     h4DayName.textContent = `${dayName}`;
@@ -303,6 +326,57 @@ function updateUI(cityData, weatherData) {
   // Hourly Forecast (Show 8 Hours Of The Chosen Day From 3PM To 10PM)
   if (cityData.timezone) {
     updateHourlyForecast(weatherData, cityData.timezone, todayIndex);
+  }
+
+  casheBaseTemps();
+}
+
+// Setting Dataset For Celsius Value Gotten From API
+function casheBaseTemps() {
+  document.querySelectorAll(".temperature_unit").forEach((el) => {
+    el.dataset.celsius = parseInt(el.textContent);
+  });
+}
+
+function casheBasePrecipitation() {
+  currentPrecipitation.dataset.mm = parseInt(currentPrecipitation.textContent);
+}
+
+// Changing Temp Unit
+
+function updateTempUnit(unit) {
+  if (!currentWeatherData) return;
+  const allTempElements = document.querySelectorAll(".temperature_unit");
+
+  allTempElements.forEach((el) => {
+    const celsius = parseInt(el.dataset.celsius);
+    if (unit === "f") {
+      el.textContent = `${Math.round(celsius * 1.8 + 32)}°`;
+    } else {
+      el.textContent = `${Math.round(celsius)}°`;
+    }
+  });
+}
+
+// Changing Wind Speed Unit
+function updateWindSpeedUnit(unit) {
+  if (!currentWeatherData) return;
+  if (unit === "mph") {
+    mph = currentWeatherData.current.wind_speed_10m / 1.609;
+    currentWindSpeed.textContent = `${Math.round(mph)} mph`;
+  } else if (unit === "km/h") {
+    currentWindSpeed.textContent = `${Math.round(mph * 1.609)} km/h`;
+    console.log(mph * 1.609);
+  }
+}
+
+function updatePrecipitationUnit(unit) {
+  if (!currentWeatherData) return;
+  const mm = currentPrecipitation.dataset.mm;
+  if (unit === "in") {
+    currentPrecipitation.textContent = `${Math.round(mm / 25.4)} in`;
+  } else if (unit === "mm") {
+    currentPrecipitation.textContent = `${Math.round(mm)} mm`;
   }
 }
 
@@ -368,13 +442,17 @@ unitsItems.forEach((item) => {
         li.classList.remove("selected");
       }
     });
+
     item.classList.add("selected");
+    const action = unitsActions[item.textContent];
+    if (action) action();
   });
 });
 
 // Search Feature
 
 searchBtn.addEventListener("click", async () => {
+  if (!currentWeatherData) return;
   cityName = searchInput.value.trim();
   if (!cityName) return;
 
@@ -414,6 +492,7 @@ forecastItems.forEach((item) => {
     updateHourlyForecast(currentWeatherData, timeZoneState, selectedDayIndex);
   });
 });
+
 //
 //
 //
