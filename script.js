@@ -129,7 +129,8 @@ async function getCityCoordinates(cityName) {
   const response = await fetch(url);
   const data = await response.json();
   if (!data.results) throw new Error("City Not Found");
-  return data.results[0];
+  console.log(data.results);
+  return data.results;
 }
 
 // Getting City Name From TimeZone
@@ -334,6 +335,7 @@ function updateUI(cityData, weatherData) {
   }
 
   casheBaseTemps();
+  casheBasePrecipitation();
 }
 
 // Setting Dataset For Celsius Value Gotten From API
@@ -379,9 +381,9 @@ function updatePrecipitationUnit(unit) {
   if (!currentWeatherData) return;
   const mm = currentPrecipitation.dataset.mm;
   if (unit === "in") {
-    currentPrecipitation.textContent = `${Math.round(mm / 25.4)} in`;
+    currentPrecipitation.textContent = `${mm / 25.4} in`;
   } else if (unit === "mm") {
-    currentPrecipitation.textContent = `${Math.round(mm)} mm`;
+    currentPrecipitation.textContent = `${mm} mm`;
   }
 }
 
@@ -462,7 +464,8 @@ searchBtn.addEventListener("click", async () => {
   if (!cityName) return;
 
   try {
-    const cityData = await getCityCoordinates(cityName);
+    const citiesData = await getCityCoordinates(cityName);
+    const cityData = citiesData[0];
     const weatherData = await getWeather(cityData.latitude, cityData.longitude);
     console.log(cityData);
     console.log(weatherData);
@@ -498,28 +501,35 @@ forecastItems.forEach((item) => {
   });
 });
 
-//
-//
-//
-//
+searchInput.addEventListener("input", async () => {
+  let query = searchInput.value.trim().toLowerCase();
+  searchResultMenu.innerHTML = "";
+  if (query.length < 2) return;
+  let allCities = await getCityCoordinates(query);
+  let filteredCities = allCities.filter(
+    (address) =>
+      address.name.trim().toLowerCase().startsWith(query) ||
+      address.country.trim().toLowerCase().startsWith(query)
+  );
+  console.log(filteredCities);
+  filteredCities.forEach((address) => {
+    let li = document.createElement("li");
+    li.textContent = `${address.name}, ${address.country}`;
+    searchResultMenu.appendChild(li);
+    li.addEventListener("click", () => {
+      searchInput.value = li.textContent;
+      searchResultMenu.innerHTML = "";
+    });
+  });
 
-// searchInput.addEventListener("input", () => {
-//   let query = searchInput.value.trim().toLowerCase();
-//   searchResultMenu.innerHTML = "";
-//   if (!query) return;
-//   let filteredCities = cities.filter(
-//     (address) =>
-//       address.city.trim().toLowerCase().startsWith(query) ||
-//       address.country.trim().toLowerCase().startsWith(query)
-//   );
-//   filteredCities.forEach((address) => {
-//     selectedCity = address;
-//     let li = document.createElement("li");
-//     li.textContent = `${address.city}, ${address.country}`;
-//     searchResultMenu.appendChild(li);
-//     li.addEventListener("click", () => {
-//       searchInput.value = li.textContent;
-//       searchResultMenu.innerHTML = "";
-//     });
-//   });
-// });
+  // for (let i = 0; i < 6; i++) {
+  //   let li = document.createElement("li");
+  //   li.textContent = `${filteredCities[i].name}, ${filteredCities[i].country}`;
+  //   searchResultMenu.appendChild(li);
+  //   console.log(filteredCities[i]);
+  //   li.addEventListener("click", () => {
+  //     searchInput.value = li.textContent;
+  //     searchResultMenu.innerHTML = "";
+  //   });
+  // }
+});
