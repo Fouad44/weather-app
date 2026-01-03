@@ -45,7 +45,7 @@ let selectedDay = days[todayIndex];
 forecastDay.textContent = selectedDay;
 
 const weatherCode = {
-  0: "sunny.webp",
+  0: "overcast.webp",
   1: "partly-cloudy.webp",
   2: "partly-cloudy.webp",
   3: "partly-cloudy.webp",
