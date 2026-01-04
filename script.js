@@ -4,15 +4,16 @@ const unitsToggle = document.getElementById("units--toggle");
 const forecastToggle = document.getElementById("forecast-toggle");
 const allMenus = document.querySelectorAll("ul");
 const unitsItems = unitsMenu.querySelectorAll("li");
-const forecastItems = forecastMenu.querySelectorAll("li");
 const forecastDay = document.getElementById("day-text");
 const searchInput = document.getElementById("search-input");
 const searchBtn = document.getElementById("search-btn");
 const searchResultMenu = document.getElementById("search-result-menu");
+const cityDateContainer = document.getElementById("main-temp-city");
 const cityText = document.getElementById("city-text");
+const currentDateText = document.getElementById("current-date");
+const currentTempImgContainer = document.getElementById("todays-temp");
 const currentTempText = document.getElementById("current-temp");
 const currentTempImg = document.getElementById("cur-temp-img");
-const currentDateText = document.getElementById("current-date");
 const currentFeelsLike = document.getElementById("feels-like");
 const currentHumidity = document.getElementById("humidity");
 const currentWindSpeed = document.getElementById("wind");
@@ -24,8 +25,12 @@ const hourlyCardsContainer = document.getElementById("hourly-cards-wrapper");
 
 const loader = document.getElementById("load");
 const hidingContent = document.getElementById("hiding-content");
+const cityNotFound = document.getElementById("city-not-found");
+const retryBtn = document.getElementById("retry-btn");
+const serverDownLayout = document.getElementById("server-down");
 
 let currentWeatherData = null;
+let currentCityData = null;
 let cityName = "";
 let timeZoneState = "";
 let mph = 0;
@@ -113,10 +118,16 @@ async function getWeather(lat, lon) {
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weather_code&hourly=temperature_2m,weather_code&current=apparent_temperature,temperature_2m,relative_humidity_2m,rain,precipitation,wind_speed_10m,weather_code&timezone=auto`;
     const response = await fetch(url);
+    if (response.status === 500 || response.status === 503) {
+      serverDownLayout.classList.remove("hidden");
+    } else {
+      serverDownLayout.classList.add("hidden");
+    }
+
     const data = await response.json();
     return data;
   } catch (err) {
-    console.log(Error("Couldn't get data"), err);
+    console.log(Error("Couldn't get weather data"), err);
   } finally {
     hideLoader();
   }
@@ -127,9 +138,13 @@ async function getWeather(lat, lon) {
 async function getCityCoordinates(cityName) {
   const url = `https://geocoding-api.open-meteo.com/v1/search?name=${cityName}&count=10&language=en&format=json`;
   const response = await fetch(url);
+  if (response.status === 500 || response.status === 503) {
+    serverDownLayout.classList.remove("hidden");
+  } else {
+    serverDownLayout.classList.add("hidden");
+  }
   const data = await response.json();
   if (!data.results) throw new Error("City Not Found");
-  console.log(data.results);
   return data.results;
 }
 
@@ -137,7 +152,6 @@ async function getCityCoordinates(cityName) {
 
 function getCityByTimeZone(timezone) {
   if (!timezone) return "Your Location";
-
   const capitalCity = timezone.split("/");
   return capitalCity[1]?.replace("_", " ") || "Your Location";
 }
@@ -346,7 +360,9 @@ function casheBaseTemps() {
 }
 
 function casheBasePrecipitation() {
-  currentPrecipitation.dataset.mm = parseInt(currentPrecipitation.textContent);
+  currentPrecipitation.dataset.mm = parseFloat(
+    currentPrecipitation.textContent
+  );
 }
 
 // Changing Temp Unit
@@ -379,9 +395,11 @@ function updateWindSpeedUnit(unit) {
 
 function updatePrecipitationUnit(unit) {
   if (!currentWeatherData) return;
-  const mm = currentPrecipitation.dataset.mm;
+
+  const mm = parseFloat(currentPrecipitation.dataset.mm);
+  console.log(mm);
   if (unit === "in") {
-    currentPrecipitation.textContent = `${mm / 25.4} in`;
+    currentPrecipitation.textContent = `${(mm / 25.4).toFixed(1)} in`;
   } else if (unit === "mm") {
     currentPrecipitation.textContent = `${mm} mm`;
   }
@@ -410,7 +428,7 @@ window.addEventListener("load", async () => {
     if (!timeZoneState) return;
     updateHourlyForecast(currentWeatherData, timeZoneState, todayIndex);
   } catch (err) {
-    console.log("Location access denied", err);
+    cityText.textContent = "Allow location access.";
   }
 });
 
@@ -460,6 +478,7 @@ unitsItems.forEach((item) => {
 
 searchBtn.addEventListener("click", async () => {
   if (!currentWeatherData) return;
+  cityNotFound.classList.add("hidden");
   cityName = searchInput.value.trim();
   if (!cityName) return;
 
@@ -467,32 +486,38 @@ searchBtn.addEventListener("click", async () => {
     const citiesData = await getCityCoordinates(cityName);
     const cityData = citiesData[0];
     const weatherData = await getWeather(cityData.latitude, cityData.longitude);
-    console.log(cityData);
-    console.log(weatherData);
 
     currentWeatherData = weatherData;
+    currentCityData = cityData;
     timeZoneState = cityData.timezone;
     updateUI(cityData, weatherData);
     getTimeByTimeZone(cityData.timezone);
-  } catch (err) {
-    console.log(Error("error"), err);
-    cityText.textContent = "";
+  } catch {
+    cityNotFound.classList.remove("hidden");
   }
 });
 
-forecastItems.forEach((item) => {
-  if (forecastDay.textContent === item.textContent) {
-    item.style.backgroundColor = "var(--btn-hover-bg)";
-  }
+// Sorted Forecast Menu Starting From Current Day
+const daysArray = Object.values(days);
+const orderedDays = daysArray
+  .slice(todayIndex)
+  .concat(daysArray.slice(0, todayIndex));
+forecastMenu.innerHTML = "";
+orderedDays.forEach((day) => {
+  const li = document.createElement("li");
+  li.classList.add("option");
+  li.textContent = day;
+  forecastMenu.appendChild(li);
+  if (li.textContent === forecastDay.textContent)
+    li.style.backgroundColor = "var(--btn-hover-bg)";
 
-  item.addEventListener("click", () => {
-    selectedDay = item.textContent;
-    forecastDay.textContent = selectedDay;
-    forecastItems.forEach((li) => {
+  li.addEventListener("click", () => {
+    selectedDay = day;
+    forecastDay.textContent = day;
+    forecastMenu.querySelectorAll("li").forEach((li) => {
       li.style.backgroundColor = "";
     });
-
-    item.style.backgroundColor = "var(--btn-hover-bg)";
+    li.style.backgroundColor = "var(--btn-hover-bg)";
 
     const selectedDayIndex = Object.keys(days).find(
       (key) => days[key] === selectedDay
@@ -501,35 +526,31 @@ forecastItems.forEach((item) => {
   });
 });
 
+// Search Input Handling
 searchInput.addEventListener("input", async () => {
   let query = searchInput.value.trim().toLowerCase();
   searchResultMenu.innerHTML = "";
-  if (query.length < 2) return;
+  if (query.length < 3) return;
   let allCities = await getCityCoordinates(query);
   let filteredCities = allCities.filter(
     (address) =>
       address.name.trim().toLowerCase().startsWith(query) ||
       address.country.trim().toLowerCase().startsWith(query)
   );
-  console.log(filteredCities);
-  filteredCities.forEach((address) => {
+
+  for (let i = 0; i < 3; i++) {
     let li = document.createElement("li");
-    li.textContent = `${address.name}, ${address.country}`;
+    li.textContent = `${filteredCities[i].name}, ${filteredCities[i].country}`;
     searchResultMenu.appendChild(li);
+
     li.addEventListener("click", () => {
       searchInput.value = li.textContent;
       searchResultMenu.innerHTML = "";
     });
-  });
+  }
+});
 
-  // for (let i = 0; i < 6; i++) {
-  //   let li = document.createElement("li");
-  //   li.textContent = `${filteredCities[i].name}, ${filteredCities[i].country}`;
-  //   searchResultMenu.appendChild(li);
-  //   console.log(filteredCities[i]);
-  //   li.addEventListener("click", () => {
-  //     searchInput.value = li.textContent;
-  //     searchResultMenu.innerHTML = "";
-  //   });
-  // }
+// Reloading Page Event
+retryBtn.addEventListener("click", () => {
+  location.reload();
 });

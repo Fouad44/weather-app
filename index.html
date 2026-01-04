@@ -23,6 +23,20 @@
     />
   </head>
   <body>
+    <div class="server-down hidden" id="server-down">
+      <img src="images/icon-error.svg" alt="erre" class="error-img" />
+      <div class="smt-went-wrong">Something went wrong</div>
+      <div class="server-down-msg">
+        We couldn't connect to the server (API error).
+      </div>
+      <div class="server-down-msg">Please try again in a few moments.</div>
+      <button class="retry" id="retry-btn">
+        <div class="retry-container">
+          <img src="images/icon-retry.svg" alt="retry" class="retry-img" />
+          <span>Retry</span>
+        </div>
+      </button>
+    </div>
     <!-- Header -->
     <header class="flex">
       <!-- Navbar -->
@@ -66,6 +80,7 @@
             placeholder="Enter city name..."
             class="search-input"
             id="search-input"
+            autocomplete="off"
           />
           <ul id="search-result-menu"></ul>
         </div>
@@ -75,16 +90,19 @@
 
     <!-- Main Content -->
     <main class="flex">
+      <div class="error hidden" id="city-not-found">
+        <div class="error-msg">No search result found!</div>
+      </div>
       <div class="main-wrapper">
         <!-- Left Side Content -->
         <div class="leftside-container">
           <!-- First Section => (Today's Temperature UI) -->
           <section class="main-temp flex">
-            <div class="main-temp-city">
+            <div class="main-temp-city" id="main-temp-city">
               <h3 class="city" id="city-text"></h3>
               <p class="current-date" id="current-date"></p>
             </div>
-            <div class="todays-temp flex">
+            <div class="todays-temp flex" id="todays-temp">
               <img class="large-img hidden" id="cur-temp-img" />
               <div class="info-temp temperature_unit" id="current-temp"></div>
             </div>
@@ -134,22 +152,14 @@
               <!-- Dropdown List (Choose Day To Show Mid Day Hours Temperature Information (8 Hours From 3 PM to 10 PM)) -->
               <div class="dropdown">
                 <div class="dropdown-toggle" id="forecast-toggle">
-                  <span id="day-text">Sunday</span>
+                  <span id="day-text"></span>
                   <img
                     src="images/icon-dropdown.svg"
                     alt="arrow"
                     class="arrow-img"
                   />
                 </div>
-                <ul class="dropdown-menu hidden" id="forecast-menu">
-                  <li class="option">Sunday</li>
-                  <li class="option">Monday</li>
-                  <li class="option">Tuesday</li>
-                  <li class="option">Wednesday</li>
-                  <li class="option">Thursday</li>
-                  <li class="option">Friday</li>
-                  <li class="option">Saturday</li>
-                </ul>
+                <ul class="dropdown-menu hidden" id="forecast-menu"></ul>
               </div>
             </div>
             <!-- Hour Information Cards -->
