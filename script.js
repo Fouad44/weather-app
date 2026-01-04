@@ -124,6 +124,13 @@ async function getWeather(lat, lon) {
       serverDownLayout.classList.add("hidden");
     }
 
+    // const res = { status: 500 };
+    // if (res.status === 500 || res.status === 503) {
+    //   serverDownLayout.classList.remove("hidden");
+    // } else {
+    //   serverDownLayout.classList.add("hidden");
+    // }
+
     const data = await response.json();
     return data;
   } catch (err) {
@@ -481,8 +488,9 @@ searchBtn.addEventListener("click", async () => {
   cityNotFound.classList.add("hidden");
   cityName = searchInput.value.trim();
   if (!cityName) return;
-
+  searchInput.value = "";
   try {
+    searchResultMenu.innerHTML = "";
     const citiesData = await getCityCoordinates(cityName);
     const cityData = citiesData[0];
     const weatherData = await getWeather(cityData.latitude, cityData.longitude);
